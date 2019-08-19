@@ -157,30 +157,64 @@ class MainWindow(QMainWindow):
     # run Simon Says thread
     self.simonThread.start()
 
+  # set button stylesheet to normal
+  def styleBtn(self, btn, sem=None):
+
+    if (btn == 1):
+      self.btn1.setStyleSheet("QPushButton{ background-color: rgb(175,255,175);"
+                                           "border: transparent;"           
+                                           "border-radius: 15px; }"
+                            "QPushButton:hover{ background-color: rgb(0,255,0); }"
+                            "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
+
+    elif (btn == 2):
+      self.btn2.setStyleSheet("QPushButton{ background-color: rgb(255,175,175);"
+                                           "border: transparent;"           
+                                           "border-radius: 15px; }"
+                            "QPushButton:hover{ background-color: rgb(255,0,0); }"
+                            "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
+
+    elif (btn == 3):
+      self.btn3.setStyleSheet("QPushButton{ background-color: rgb(255,255,175);"
+                                           "border: transparent;"           
+                                           "border-radius: 15px; }"
+                            "QPushButton:hover{ background-color: rgb(255,255,0); }"
+                            "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
+        
+    elif (btn == 4):
+      self.btn4.setStyleSheet("QPushButton{ background-color: rgb(175,175,255);"
+                                           "border: transparent;"           
+                                           "border-radius: 15px; }"
+                            "QPushButton:hover{ background-color: rgb(0,0,255); }"
+                            "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
+
+    if (sem):
+      sem.release()
+
   # flash button
   def flashBtn(self, btn, ms, sem):
 
     if (btn == 1):
       self.sounds[1].play()
-      self.btn1.setStyleSheet("QPushButton{ background-color: rgb(255,0,0);"
+      self.btn1.setStyleSheet("QPushButton{ background-color: rgb(0,255,0);"
                                             "border: transparent;"            
                                             "border-radius: 15px; }")
 
     elif (btn == 2):
       self.sounds[2].play()
-      self.btn2.setStyleSheet("QPushButton{ background-color: rgb(0,255,0);"
+      self.btn2.setStyleSheet("QPushButton{ background-color: rgb(255,0,0);"
                                             "border: transparent;"            
                                             "border-radius: 15px; }")
 
     elif (btn == 3):
       self.sounds[3].play()
-      self.btn3.setStyleSheet("QPushButton{ background-color: rgb(0,0,255);"
+      self.btn3.setStyleSheet("QPushButton{ background-color: rgb(255,255,0);"
                                             "border: transparent;"            
                                             "border-radius: 15px; }")
             
     elif (btn == 4):
       self.sounds[4].play()
-      self.btn4.setStyleSheet("QPushButton{ background-color: rgb(255,255,0);"
+      self.btn4.setStyleSheet("QPushButton{ background-color: rgb(0,0,255);"
                                             "border: transparent;"            
                                             "border-radius: 15px; }") 
 
@@ -197,40 +231,6 @@ class MainWindow(QMainWindow):
     self.timer = QTimer()
     self.timer.timeout.connect(sem.release)
     self.timer.start(ms)                      
-
-  # set button stylesheet to normal
-  def styleBtn(self, btn, sem=None):
-
-    if (btn == 1):
-      self.btn1.setStyleSheet("QPushButton{ background-color: rgb(255,175,175);"
-                                           "border: transparent;"           
-                                           "border-radius: 15px; }"
-                            "QPushButton:hover{ background-color: rgb(255,0,0); }"
-                            "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
-
-    elif (btn == 2):
-      self.btn2.setStyleSheet("QPushButton{ background-color: rgb(175,255,175);"
-                                           "border: transparent;"           
-                                           "border-radius: 15px; }"
-                            "QPushButton:hover{ background-color: rgb(0,255,0); }"
-                            "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
-
-    elif (btn == 3):
-      self.btn3.setStyleSheet("QPushButton{ background-color: rgb(175,175,255);"
-                                           "border: transparent;"           
-                                           "border-radius: 15px; }"
-                            "QPushButton:hover{ background-color: rgb(0,0,255); }"
-                            "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
-        
-    elif (btn == 4):
-      self.btn4.setStyleSheet("QPushButton{ background-color: rgb(255,255,175);"
-                                           "border: transparent;"           
-                                           "border-radius: 15px; }"
-                            "QPushButton:hover{ background-color: rgb(255,255,0); }"
-                            "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
-
-    if (sem):
-      sem.release()
 
   # enable / disable game buttons
   def enableButtons(self, en):
