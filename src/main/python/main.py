@@ -98,7 +98,7 @@ class MainWindow(QMainWindow):
 
     self.easyBtn.setCheckable(True)
     self.easyBtn.setChecked(True)
-    self.easyBtn.setStatusTip("Set game difficulty: EASY")
+    self.easyBtn.setStatusTip("Classic ~ Simon adds on to the previous pattern every round")
     self.easyBtn.clicked.connect(self.SLOT_easyBtn)
 
     ################
@@ -114,7 +114,7 @@ class MainWindow(QMainWindow):
 
     self.hardBtn.setCheckable(True)
     self.hardBtn.setChecked(False)
-    self.hardBtn.setStatusTip("Set game difficulty: HARD")
+    self.hardBtn.setStatusTip("Challenger ~ Simon plays a new random pattern every round")
     self.hardBtn.clicked.connect(self.SLOT_hardBtn)
 
     # EASY-HARD button sizing
@@ -319,9 +319,10 @@ class MainWindow(QMainWindow):
       # 4: QSound(self.resource_path('sounds/808s/Cymatics x San Holo - 808 4 - E.wav')),
       # 1: QSound(self.resource_path('sounds/808s/Cymatics x San Holo - 808 1 - C.wav'))
 
-      # 2: QSound(self.resource_path('sounds/simon 2 saec1.wav')),
-      # 3: QSound(self.resource_path('sounds/simon 2 sec2.wav')),
-      # 4: QSound(self.resource_path('sounds/simon 2 sec3.wav'))
+      # 1: QSound(self.get_resource('sounds/nice-work.wav')),
+      # 2: QSound(self.get_resource('sounds/nice-work.wav')),
+      # 3: QSound(self.get_resource('sounds/nice-work.wav')),
+      # 4: QSound(self.get_resource('sounds/nice-work.wav'))
 
       1: QSound(soundsPath+"nice-work.wav"),
       2: QSound(soundsPath+"nice-work.wav"),

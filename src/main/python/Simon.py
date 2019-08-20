@@ -28,7 +28,7 @@ class SimonSays(QThread):
   def run(self):
 
     self.setMsgBar.emit("Starting new game . . .")
-    self.runStartupFlash(75)
+    self.runStartupFlash()
 
     while (self.valid):
 
@@ -69,7 +69,7 @@ class SimonSays(QThread):
     # GAME OVER
     self.pattern.clear()
     self.setMsgBar.emit("Round " + str(self.roundNum) + ": GAME OVER")
-    self.runStartupFlash(75)
+    self.runStartupFlash()
     self.quit()
 
   # generate Simon's pattern for the round
@@ -91,7 +91,7 @@ class SimonSays(QThread):
       self.sem.acquire()
 
   # run new game startup flash sequence
-  def runStartupFlash(self, ms):
+  def runStartupFlash(self, ms=75):
 
     for i in range(3):
       self.flash.emit(1, ms, self.sem)
