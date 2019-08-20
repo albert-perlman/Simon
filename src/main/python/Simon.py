@@ -15,10 +15,11 @@ class SimonSays(QThread):
   setWinTitle   = pyqtSignal(str)                   # update main window title
   btnEnable     = pyqtSignal(bool)                  # enable / disable game buttons
 
-  def __init__(self, parent=None):
+  def __init__(self, difficulty, parent=None):
     super(SimonSays, self).__init__(parent)
 
     self.sem        = QSemaphore() # semaphore used for blocking thread during GUI updates in main thread
+    self.difficulty = difficulty
     self.roundNum   = 0            # round number
     self.pattern    = []           # Simon's pattern
     self.usrInput   = []           # user's input pattern
@@ -66,15 +67,20 @@ class SimonSays(QThread):
         self.sem.acquire()      
 
     # GAME OVER
+    self.pattern.clear()
     self.setMsgBar.emit("Round " + str(self.roundNum) + ": GAME OVER")
     self.runStartupFlash(75)
     self.quit()
 
   # generate Simon's pattern for the round
   def patternGen(self):
-    self.pattern.clear()
-    for i in range(self.roundNum):
+    if self.difficulty == "easy":
       self.pattern.append(random.randint(1,4))
+    
+    elif self.difficulty == "hard":
+      self.pattern.clear()
+      for i in range(self.roundNum):
+        self.pattern.append(random.randint(1,4))
 
   # flash Simon's pattern for the round
   def patternFlash(self):

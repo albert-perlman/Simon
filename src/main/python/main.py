@@ -21,14 +21,16 @@ class MainWindow(QMainWindow):
     super(MainWindow, self).__init__(*args, **kwargs)
 
     self.sounds = self.initSounds()
+    self.difficulty = "easy"
 
     ###################
     ### Main Window ###
     ###################
     msgBarHeight = 10
     startBtnHeight = 75
+    difficultyBtnHeight = 10
     windowWidth = 500
-    windowHeight = windowWidth + msgBarHeight + startBtnHeight
+    windowHeight = windowWidth + msgBarHeight + startBtnHeight + difficultyBtnHeight
     self.resize(windowWidth, windowHeight)
     self.setStyleSheet("QMainWindow { color:rgb(255,255,255);"                    
                                       "background-color:#454545; }"
@@ -37,7 +39,7 @@ class MainWindow(QMainWindow):
                                      "border-radius: 15px;"
                                      "background: transparent; }"
                        "QPushButton:hover { color: white; border: 5px solid white; }" 
-                       "QPushButton:pressed { color: rgb(0,255,0); border: 5px solid rgb(0,255,0); }" )
+                       "QPushButton:pressed { color: rgb(150,255,150); border: 5px solid rgb(150,255,150); }" )
 
     MainVBoxLayout = QVBoxLayout()
 
@@ -57,11 +59,11 @@ class MainWindow(QMainWindow):
     font = QFont("Serif", 9) 
     self.msgBar.setFont(font)
     self.msgBar.setStyleSheet("font-size: 16pt;  font-family: Consolas;"
-                   "color:rgb(255,255,255);"
-                   "border: 2px ridge #707070;"
-                   "border-radius: 10px;"
-                   "padding: 5px;"
-                   "background-color:qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #393939, stop: 1 #343434);")
+                             "color:rgb(255,255,255);"
+                             "border: 2px ridge #707070;"
+                             "border-radius: 10px;"
+                             "padding: 5px;"
+                             "background-color:qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #393939, stop: 1 #343434);")
     self.msgBar.setReadOnly(True)
     self.msgBar.setAlignment(Qt.AlignCenter)
 
@@ -83,9 +85,64 @@ class MainWindow(QMainWindow):
     self.startBtn.setStatusTip("Start a new game")
     self.startBtn.clicked.connect(self.SLOT_start)
 
-    ###########
-    # BUTTONS #
-    ###########
+    ################
+    # EASY  button #
+    ################
+    self.easyBtn = QPushButton("EASY")
+    self.easyBtn.setStyleSheet("QPushButton { font-size: 22pt;  font-family: Consolas; color: black;"
+                                              "border: 5px solid black;"
+                                              "border-radius: 15px;"
+                                              "background: transparent; }"
+                              "QPushButton:hover { color: white; border: 5px solid white; }" 
+                              "QPushButton:checked { color: rgb(0,255,0); border: 5px solid rgb(0,255,0); }" )
+
+    self.easyBtn.setCheckable(True)
+    self.easyBtn.setChecked(True)
+    self.easyBtn.setStatusTip("Set game difficulty: EASY")
+    self.easyBtn.clicked.connect(self.SLOT_easyBtn)
+
+    ################
+    # HARD  button #
+    ################
+    self.hardBtn = QPushButton("HARD")
+    self.hardBtn.setStyleSheet("QPushButton { font-size: 22pt;  font-family: Consolas; color: black;"
+                                              "border: 5px solid black;"
+                                              "border-radius: 15px;"
+                                              "background: transparent; }"
+                              "QPushButton:hover { color: white; border: 5px solid white; }" 
+                              "QPushButton:checked { color: rgb(255,0,0); border: 5px solid rgb(255,0,0); }" )
+
+    self.hardBtn.setCheckable(True)
+    self.hardBtn.setChecked(False)
+    self.hardBtn.setStatusTip("Set game difficulty: HARD")
+    self.hardBtn.clicked.connect(self.SLOT_hardBtn)
+
+    # EASY-HARD button sizing
+    difficultyBtnWidth = 175
+    self.easyBtn.setMinimumWidth(difficultyBtnWidth)
+    self.hardBtn.setMinimumWidth(difficultyBtnWidth)
+
+    # spacers #
+    spacerEasy = QWidget()
+    spacerEasyHard = QWidget()
+    spacerHard = QWidget()
+    spacerEasy.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+    spacerEasyHard.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+    spacerHard.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+    # EASY-HARD button row
+    difficultyLayout = QHBoxLayout()
+    MainVBoxLayout.addLayout(difficultyLayout)
+
+    difficultyLayout.addWidget(spacerEasy)   
+    difficultyLayout.addWidget(self.easyBtn)
+    difficultyLayout.addWidget(spacerEasyHard)
+    difficultyLayout.addWidget(self.hardBtn)
+    difficultyLayout.addWidget(spacerHard)
+
+    ################
+    # GAME BUTTONS #
+    ################
   
     # row 1 Layout #
     row1Layout = QHBoxLayout()
@@ -136,8 +193,11 @@ class MainWindow(QMainWindow):
   # start Simon Says
   def SLOT_start(self):
 
+    # disable difficulty selection
+    self.enableDifficultyButtons(False)
+
     # create Simon Says back-end thread
-    self.simonThread = Simon.SimonSays()
+    self.simonThread = Simon.SimonSays(self.difficulty)
 
     # connect Simon Says thread signals to main thread methods
     self.simonThread.flash.connect(self.flashBtn)
@@ -147,6 +207,7 @@ class MainWindow(QMainWindow):
     self.simonThread.setMsgBar.connect(self.msgBar.setText)
     self.simonThread.setWinTitle.connect(self.updateTitle)
     self.simonThread.btnEnable.connect(self.enableButtons)
+    self.simonThread.finished.connect(self.enableDifficultyButtons)
 
     # connect GUI button signals to Simon Says thread SLOTs
     self.btn1.clicked.connect(self.simonThread.SLOT_btn1Clicked)
@@ -239,6 +300,11 @@ class MainWindow(QMainWindow):
     self.btn3.setEnabled(en)
     self.btn4.setEnabled(en)
 
+  # enable / disable difficulty selection buttons
+  def enableDifficultyButtons(self, en=True):
+    self.easyBtn.setEnabled(en)
+    self.hardBtn.setEnabled(en)
+
   # init synth sounds from sounds/*.wav files
   def initSounds(self):
     soundsPath = "../sounds/"
@@ -268,6 +334,18 @@ class MainWindow(QMainWindow):
   # play sound effect
   def playSound(self, i):
     self.sounds[i].play()
+
+  # EASY button pressed
+  def SLOT_easyBtn(self):
+    self.difficulty = "easy"
+    self.easyBtn.setChecked(True)
+    self.hardBtn.setChecked(False)
+
+  # HARD button pressed
+  def SLOT_hardBtn(self):
+    self.difficulty = "hard"
+    self.hardBtn.setChecked(True)
+    self.easyBtn.setChecked(False)
 
   # critical dialog pop-up
   def SLOT_dialogCritical(self, s):
