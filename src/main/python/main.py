@@ -20,7 +20,8 @@ class MainWindow(QMainWindow):
   def __init__(self, *args, **kwargs):
     super(MainWindow, self).__init__(*args, **kwargs)
 
-    self.sounds = self.initSounds()
+    self.appctxt    = ApplicationContext()
+    self.sounds     = self.initSounds()
     self.difficulty = "easy"
 
     ###################
@@ -324,10 +325,10 @@ class MainWindow(QMainWindow):
       # 3: QSound(self.get_resource('sounds/nice-work.wav')),
       # 4: QSound(self.get_resource('sounds/nice-work.wav'))
 
-      1: QSound(soundsPath+"nice-work.wav"),
-      2: QSound(soundsPath+"nice-work.wav"),
-      3: QSound(soundsPath+"nice-work.wav"),
-      4: QSound(soundsPath+"nice-work.wav")
+      1: QSound(self.appctxt.get_resource('sounds/nice-work.wav')),
+      2: QSound(self.appctxt.get_resource('sounds/nice-work.wav')),
+      3: QSound(self.appctxt.get_resource('sounds/nice-work.wav')),
+      4: QSound(self.appctxt.get_resource('sounds/nice-work.wav'))
     }
 
     return sounds
