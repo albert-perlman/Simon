@@ -1,8 +1,11 @@
 *.so
 *.so.*
+*.dll
+*.pyc
+*.pyd
+*.zip
 
 target/installer/
 target/PyInstaller/
 target/Simon/PyQt5
-target/Simon/*.zip
 
