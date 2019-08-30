@@ -24,18 +24,24 @@ class MainWindow(QMainWindow):
     self.sounds     = self.initSounds()
     self.difficulty = "easy"
 
+    # fonts #
+    QFontDatabase.addApplicationFont(self.appctxt.get_resource('fonts/LLPIXEL3.ttf'))
+    QFontDatabase.addApplicationFont(self.appctxt.get_resource('fonts/batmfo__.ttf'))
+    QFontDatabase.addApplicationFont(self.appctxt.get_resource('fonts/batmfa__.ttf'))
+
     ###################
     ### Main Window ###
     ###################
     msgBarHeight = 10
     startBtnHeight = 75
-    difficultyBtnHeight = 10
+    difficultyBtnHeight = 15
     windowWidth = 500
-    windowHeight = windowWidth + msgBarHeight + startBtnHeight + difficultyBtnHeight
-    self.resize(windowWidth, windowHeight)
+    windowHeight = windowWidth + msgBarHeight + difficultyBtnHeight
+    self.setFixedSize(windowWidth, windowHeight)
     self.setStyleSheet("QMainWindow { color:rgb(255,255,255);"                    
-                                      "background-color:#454545; }"
-                       "QPushButton { font-size: 26pt;  font-family: Consolas; color: black;"
+                                      "background-color:#606060;"
+                                      "font-family: BatmanForeverOutline; }"
+                       "QPushButton { font-size: 26pt; color: black; font-family: BatmanForeverAlternate;"
                                      "border: 5px solid black;"
                                      "border-radius: 15px;"
                                      "background: transparent; }"
@@ -54,7 +60,7 @@ class MainWindow(QMainWindow):
     self.setStatusBar(self.status)
 
     #####################
-    # Round No. display #
+    #  Message Display  #
     #####################
     self.msgBar = QLineEdit("press START to begin new game")
     font = QFont("Serif", 9) 
@@ -81,16 +87,16 @@ class MainWindow(QMainWindow):
     self.startBtn = QPushButton("S T A R T")
     self.startBtn.setMinimumHeight(startBtnHeight)
     self.startBtn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
-    MainVBoxLayout.addWidget(self.startBtn)
+    # MainVBoxLayout.addWidget(self.startBtn)
 
-    self.startBtn.setStatusTip("Start a new game")
-    self.startBtn.clicked.connect(self.SLOT_start)
+
 
     ################
     # EASY  button #
     ################
     self.easyBtn = QPushButton("EASY")
-    self.easyBtn.setStyleSheet("QPushButton { font-size: 22pt;  font-family: Consolas; color: black;"
+    self.easyBtn.setStyleSheet("QPushButton { font-size: 22pt; font-family: BatmanForeverAlternate;  color: black;"
+                                              "padding: 5px;"
                                               "border: 5px solid black;"
                                               "border-radius: 15px;"
                                               "background: transparent; }"
@@ -106,7 +112,8 @@ class MainWindow(QMainWindow):
     # HARD  button #
     ################
     self.hardBtn = QPushButton("HARD")
-    self.hardBtn.setStyleSheet("QPushButton { font-size: 22pt;  font-family: Consolas; color: black;"
+    self.hardBtn.setStyleSheet("QPushButton { font-size: 22pt;  font-family: BatmanForeverAlternate; color: black;"
+                                              "padding: 5px;"
                                               "border: 5px solid black;"
                                               "border-radius: 15px;"
                                               "background: transparent; }"
@@ -121,7 +128,9 @@ class MainWindow(QMainWindow):
     # EASY-HARD button sizing
     difficultyBtnWidth = 175
     self.easyBtn.setMinimumWidth(difficultyBtnWidth)
+    self.easyBtn.setMinimumHeight(difficultyBtnHeight)
     self.hardBtn.setMinimumWidth(difficultyBtnWidth)
+    self.hardBtn.setMinimumHeight(difficultyBtnHeight)
 
     # spacers #
     spacerEasy = QWidget()
@@ -145,13 +154,16 @@ class MainWindow(QMainWindow):
     # GAME BUTTONS #
     ################
   
-    # row 1 Layout #
-    row1Layout = QHBoxLayout()
-    MainVBoxLayout.addLayout(row1Layout)
+    # Layout #
+    btnLayout = QVBoxLayout()
+    # btnLayout.setSpacing(0)
 
-    # row 2 Layout #
+    row1Layout = QHBoxLayout()
     row2Layout = QHBoxLayout()
-    MainVBoxLayout.addLayout(row2Layout)
+
+    btnLayout.addLayout(row1Layout)
+    btnLayout.addLayout(row2Layout)
+    MainVBoxLayout.addLayout(btnLayout)
 
     # button 1 #
     self.btn1 = QPushButton()
@@ -173,7 +185,17 @@ class MainWindow(QMainWindow):
     self.btn4.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
     row2Layout.addWidget(self.btn4)
 
+    # START #
+    self.startBtn = QPushButton(MainWidgetContainer)
+    self.startBtn.clicked.connect(self.SLOT_start)
+    startBtnWidth = 200
+    startBtnHeight = startBtnWidth
+    self.startBtn.resize(startBtnWidth,startBtnHeight)
+    pos = QPoint(windowWidth/2 - startBtnWidth/2, windowHeight/2 - startBtnHeight/2)
+    self.startBtn.move(pos) 
+
     # style game buttons
+    self.styleBtn(0)
     self.styleBtn(1)
     self.styleBtn(2)
     self.styleBtn(3)
@@ -222,31 +244,45 @@ class MainWindow(QMainWindow):
   # set button stylesheet to normal
   def styleBtn(self, btn, sem=None):
 
+    if (btn == 0):
+      self.startBtn.setText("START")
+      self.startBtn.setStatusTip("Start a new game")
+      self.startBtn.setStyleSheet("QPushButton { font-size: 26pt; font-family: BatmanForeverAlternate; color: black;"
+                                              "border: 4px ridge black;"
+                                              "border-radius: 75px;"
+                                              "background: gray; }"
+                              "QPushButton:hover { color: white; border: 5px solid white; }" 
+                              "QPushButton:pressed { color: rgb(0,255,0); border: 5px solid rgb(0,255,0); }" )
+
     if (btn == 1):
       self.btn1.setStyleSheet("QPushButton{ background-color: rgb(175,255,175);"
-                                           "border: transparent;"           
-                                           "border-radius: 15px; }"
+                                           "border: 5px ridge black;"                                            
+                                           "border-radius: 15px;"                                           
+                                           "border-top-left-radius: 75px; }"
                             "QPushButton:hover{ background-color: rgb(0,255,0); }"
                             "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
 
     elif (btn == 2):
       self.btn2.setStyleSheet("QPushButton{ background-color: rgb(255,175,175);"
-                                           "border: transparent;"           
-                                           "border-radius: 15px; }"
+                                           "border: 5px ridge black;"         
+                                           "border-radius: 15px; "
+                                           "border-top-right-radius: 75px; }"
                             "QPushButton:hover{ background-color: rgb(255,0,0); }"
                             "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
 
     elif (btn == 3):
       self.btn3.setStyleSheet("QPushButton{ background-color: rgb(255,255,175);"
-                                           "border: transparent;"           
-                                           "border-radius: 15px; }"
+                                           "border: 5px ridge black;"         
+                                           "border-radius: 15px;"
+                                           "border-bottom-left-radius: 75px; }"
                             "QPushButton:hover{ background-color: rgb(255,255,0); }"
                             "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
         
     elif (btn == 4):
       self.btn4.setStyleSheet("QPushButton{ background-color: rgb(175,175,255);"
-                                           "border: transparent;"           
-                                           "border-radius: 15px; }"
+                                           "border: 5px ridge black;"      
+                                           "border-radius: 15px;"
+                                           "border-bottom-right-radius: 75px; }"
                             "QPushButton:hover{ background-color: rgb(0,0,255); }"
                             "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
 
@@ -259,26 +295,30 @@ class MainWindow(QMainWindow):
     if (btn == 1):
       self.sounds[1].play()
       self.btn1.setStyleSheet("QPushButton{ background-color: rgb(0,255,0);"
-                                            "border: transparent;"            
-                                            "border-radius: 15px; }")
+                                           "border: 5px ridge black;"                                            
+                                           "border-radius: 15px;"                                           
+                                           "border-top-left-radius: 75px; }")
 
     elif (btn == 2):
       self.sounds[2].play()
       self.btn2.setStyleSheet("QPushButton{ background-color: rgb(255,0,0);"
-                                            "border: transparent;"            
-                                            "border-radius: 15px; }")
+                                           "border: 5px ridge black;"         
+                                           "border-radius: 15px; "
+                                           "border-top-right-radius: 75px; }")
 
     elif (btn == 3):
       self.sounds[3].play()
       self.btn3.setStyleSheet("QPushButton{ background-color: rgb(255,255,0);"
-                                            "border: transparent;"            
-                                            "border-radius: 15px; }")
+                                           "border: 5px ridge black;"         
+                                           "border-radius: 15px;"
+                                           "border-bottom-left-radius: 75px; }")
             
     elif (btn == 4):
       self.sounds[4].play()
       self.btn4.setStyleSheet("QPushButton{ background-color: rgb(0,0,255);"
-                                            "border: transparent;"            
-                                            "border-radius: 15px; }") 
+                                           "border: 5px ridge black;"      
+                                           "border-radius: 15px;"
+                                           "border-bottom-right-radius: 75px; }") 
 
     self.runFlashTimer(btn, ms, sem)
 
@@ -359,20 +399,6 @@ class MainWindow(QMainWindow):
   # update main window title
   def updateTitle(self, str=""):
     self.setWindowTitle("SiMoN sAyS "+ str)
-
-  # Get absolute path to resource, works for dev and for PyInstaller  -   used to set icon paths
-  # https://stackoverflow.com/questions/33144448/icons-in-pyqt-app-created-by-pyinstaller-wont-work-on-other-computers
-  #______________________________________________________________________________________________
-  def resource_path(self,relative_path):
-    try:
-      # PyInstaller creates a temp folder and stores path in _MEIPASS
-      base_path = sys._MEIPASS
-    except Exception:
-      base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
-
-#______________________________________________________________________________________________
 
 if __name__ == '__main__':
     appctxt = ApplicationContext()       # 1. Instantiate ApplicationContext
