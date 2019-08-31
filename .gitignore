@@ -8,4 +8,7 @@
 target/installer/
 target/PyInstaller/
 target/Simon/PyQt5
+target/Simon/sounds
+target/Simon/fonts
+target/Simon/images
 

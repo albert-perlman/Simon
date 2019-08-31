@@ -9,8 +9,8 @@ class SimonSays(QThread):
   # signals slotted to main thread
   flash         = pyqtSignal(int, int, QSemaphore)  # flash button ( button , time(ms), semaphore )
   delay         = pyqtSignal(int, QSemaphore)       # run delay timer ( time(ms), semaphore )
-  sound         = pyqtSignal(int)                   # play sound
-  revert        = pyqtSignal(int)                   # revert game button style to normal
+  sound         = pyqtSignal(int)                   # play sound (index)
+  revert        = pyqtSignal(int)                   # revert game button style to normal (button)
   setStatus     = pyqtSignal(str)                   # update status bar message
   setMsgBar     = pyqtSignal(str)                   # update MsgBar text
   setWinTitle   = pyqtSignal(str)                   # update main window title
@@ -86,6 +86,7 @@ class SimonSays(QThread):
   # flash Simon's pattern for the round
   def patternFlash(self):
     for i in range(len(self.pattern)):
+      self.sound.emit(self.pattern[i])
       self.flash.emit(self.pattern[i], 500, self.sem)
       self.sem.acquire()
       self.delay.emit(500, self.sem)
@@ -95,7 +96,9 @@ class SimonSays(QThread):
   # run new game startup flash sequence
   def runStartupFlash(self, ms=75):
 
-    for i in range(3):
+    self.sound.emit(0)
+
+    for i in range(20):
       self.flash.emit(1, ms, self.sem)
       self.sem.acquire()
       self.flash.emit(2, ms, self.sem)

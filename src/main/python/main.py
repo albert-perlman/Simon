@@ -261,7 +261,7 @@ class MainWindow(QMainWindow):
                                                 "border: 5px solid black;"
                                                 "border-radius: 100px;"
                                                 "background: gray; }"
-                            "QPushButton:hover { color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #FF0000, stop: 0.3 #FFFF00, stop: 0.6 #00FF00, stop: 1.0 #0000FF);"
+                            "QPushButton:hover { color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #FF0000, stop: 0.4 #FFFF00, stop: 0.45 #00FF00, stop: 1.0 #0000FF);"
                                                 "border-bottom-color: rgb(0,255,0);"
                                                 "border-left-color: rgb(255,0,0);"
                                                 "border-top-color: rgb(0,0,255);"
@@ -334,7 +334,6 @@ class MainWindow(QMainWindow):
   def flashBtn(self, btn, ms, sem):
 
     if (btn == 1):
-      self.sounds[1].play()
       self.flashStart(1)
       self.btn1.setStyleSheet("QPushButton{ background-color: rgb(0,255,0);"
                                            "border: 5px ridge black;"                                            
@@ -342,7 +341,6 @@ class MainWindow(QMainWindow):
                                            "border-top-left-radius: 75px; }")
 
     elif (btn == 2):
-      self.sounds[2].play()
       self.flashStart(2)
       self.btn2.setStyleSheet("QPushButton{ background-color: rgb(255,0,0);"
                                            "border: 5px ridge black;"         
@@ -350,7 +348,6 @@ class MainWindow(QMainWindow):
                                            "border-top-right-radius: 75px; }")
 
     elif (btn == 3):
-      self.sounds[3].play()
       self.flashStart(3)
       self.btn3.setStyleSheet("QPushButton{ background-color: rgb(255,255,0);"
                                            "border: 5px ridge black;"         
@@ -358,7 +355,6 @@ class MainWindow(QMainWindow):
                                            "border-bottom-left-radius: 75px; }")
             
     elif (btn == 4):
-      self.sounds[4].play()
       self.flashStart(4)
       self.btn4.setStyleSheet("QPushButton{ background-color: rgb(0,0,255);"
                                            "border: 5px ridge black;"      
@@ -396,25 +392,24 @@ class MainWindow(QMainWindow):
   def initSounds(self):
     soundsPath = "../sounds/"
     sounds = {
-      # 2: QSound(self.resource_path('sounds/nice-work.wav')),
-      # 3: QSound(self.resource_path('sounds/nice-work.wav')),
-      # 4: QSound(self.resource_path('sounds/nice-work.wav')),
-      # 1: QSound(self.resource_path('sounds/nice-work.wav')),
+      
+      # START-UP #
+      # 0: QSound(self.appctxt.get_resource('/home/mojo/devel/git/Simon/src/main/resources/base/sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - Loops/Cymatics - Mothership Drop Loop 1 - 150 BPM F.wav')),
+      0: QSound(self.appctxt.get_resource('/home/mojo/devel/git/Simon/src/main/resources/base/sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - Loops/Cymatics - Mothership Drop Loop 2 - 150 BPM F.wav')),
+      # 0: QSound(self.appctxt.get_resource('/home/mojo/devel/git/Simon/src/main/resources/base/sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - Loops/Cymatics - Mothership Drop Loop 3 - 150 BPM F.wav')),
+      # 0: QSound(self.appctxt.get_resource('/home/mojo/devel/git/Simon/src/main/resources/base/sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - Loops/Cymatics - Mothership Drop Loop 4 - 150 BPM F.wav'))
 
-      # 2: QSound(self.resource_path('sounds/808s/Cymatics x San Holo - 808 2 - C.wav')),
-      # 3: QSound(self.resource_path('sounds/808s/Cymatics x San Holo - 808 3 - D#.wav')),
-      # 4: QSound(self.resource_path('sounds/808s/Cymatics x San Holo - 808 4 - E.wav')),
-      # 1: QSound(self.resource_path('sounds/808s/Cymatics x San Holo - 808 1 - C.wav'))
+      # WUB-SYNTH #
+      1: QSound(self.appctxt.get_resource('sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - One Shots/Cymatics - Mothership Bass One Shot 10 - F.wav')),
+      2: QSound(self.appctxt.get_resource('sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - One Shots/Cymatics - Mothership Bass One Shot 9 - F.wav')), # w/ snare
+      3: QSound(self.appctxt.get_resource('sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - One Shots/Cymatics - Mothership Bass One Shot 1 - E.wav')),
+      4: QSound(self.appctxt.get_resource('sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - One Shots/Cymatics - Mothership Bass One Shot 3 - E.wav'))
 
-      # 1: QSound(self.get_resource('sounds/nice-work.wav')),
-      # 2: QSound(self.get_resource('sounds/nice-work.wav')),
-      # 3: QSound(self.get_resource('sounds/nice-work.wav')),
-      # 4: QSound(self.get_resource('sounds/nice-work.wav'))
-
-      1: QSound(self.appctxt.get_resource('sounds/nice-work.wav')),
-      2: QSound(self.appctxt.get_resource('sounds/nice-work.wav')),
-      3: QSound(self.appctxt.get_resource('sounds/nice-work.wav')),
-      4: QSound(self.appctxt.get_resource('sounds/nice-work.wav'))
+      # # SNARE #
+      # 1: QSound(self.appctxt.get_resource('sounds/Drums - One Shots/Snares/Cymatics - Terror Heavy Snare 014.wav')),
+      # 2: QSound(self.appctxt.get_resource('sounds/Drums - One Shots/Snares/Cymatics - Terror Heavy Snare 038.wav')),
+      # 3: QSound(self.appctxt.get_resource('sounds/Drums - One Shots/Snares/Cymatics - Ultimate Snare 20 - D#.wav')),
+      # 4: QSound(self.appctxt.get_resource('sounds/Drums - One Shots/Snares/Cymatics - Ultimate Snare 36 - G#.wav'))
     }
 
     return sounds
