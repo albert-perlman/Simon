@@ -155,11 +155,9 @@ class MainWindow(QMainWindow):
     ################
   
     # Layout #
-    btnLayout = QVBoxLayout()
-    # btnLayout.setSpacing(0)
-
-    row1Layout = QHBoxLayout()
-    row2Layout = QHBoxLayout()
+    btnLayout   = QVBoxLayout()
+    row1Layout  = QHBoxLayout()
+    row2Layout  = QHBoxLayout()
 
     btnLayout.addLayout(row1Layout)
     btnLayout.addLayout(row2Layout)
@@ -187,12 +185,15 @@ class MainWindow(QMainWindow):
 
     # START #
     self.startBtn = QPushButton(MainWidgetContainer)
-    self.startBtn.clicked.connect(self.SLOT_start)
+    self.startBtn.setText("START")
+    self.startBtn.setStatusTip("Start a new game")
     startBtnWidth = 200
     startBtnHeight = startBtnWidth
     self.startBtn.resize(startBtnWidth,startBtnHeight)
     pos = QPoint(windowWidth/2 - startBtnWidth/2, windowHeight/2 - startBtnHeight/2)
-    self.startBtn.move(pos) 
+    self.startBtn.move(pos)
+
+    self.startBtn.clicked.connect(self.SLOT_start)
 
     # style game buttons
     self.styleBtn(0)
@@ -201,11 +202,21 @@ class MainWindow(QMainWindow):
     self.styleBtn(3)
     self.styleBtn(4)
 
-    # connect game button clicks to synth sounds
-    self.btn1.clicked.connect(self.sounds[1].play)
-    self.btn2.clicked.connect(self.sounds[2].play)
-    self.btn3.clicked.connect(self.sounds[3].play)
-    self.btn4.clicked.connect(self.sounds[4].play)
+    # connect game button press to synth sounds
+    self.btn1.pressed.connect(self.sounds[1].play)
+    self.btn2.pressed.connect(self.sounds[2].play)
+    self.btn3.pressed.connect(self.sounds[3].play)
+    self.btn4.pressed.connect(self.sounds[4].play)
+
+    # connect game button press / release to style center START button
+    self.btn1.pressed.connect(lambda: self.flashStart(1))
+    self.btn2.pressed.connect(lambda: self.flashStart(2))
+    self.btn3.pressed.connect(lambda: self.flashStart(3))
+    self.btn4.pressed.connect(lambda: self.flashStart(4))
+    self.btn1.released.connect(self.styleBtn)
+    self.btn2.released.connect(self.styleBtn)
+    self.btn3.released.connect(self.styleBtn)
+    self.btn4.released.connect(self.styleBtn)
 
     # add MsgBar at bottom
     MainVBoxLayout.addWidget(self.msgBar)
@@ -224,8 +235,9 @@ class MainWindow(QMainWindow):
 
     # connect Simon Says thread signals to main thread methods
     self.simonThread.flash.connect(self.flashBtn)
-    self.simonThread.sound.connect(self.playSound)
     self.simonThread.delay.connect(self.runDelayTimer)
+    self.simonThread.sound.connect(self.playSound)
+    self.simonThread.revert.connect(self.styleBtn)
     self.simonThread.setStatus.connect(self.status.showMessage)
     self.simonThread.setMsgBar.connect(self.msgBar.setText)
     self.simonThread.setWinTitle.connect(self.updateTitle)
@@ -242,58 +254,88 @@ class MainWindow(QMainWindow):
     self.simonThread.start()
 
   # set button stylesheet to normal
-  def styleBtn(self, btn, sem=None):
+  def styleBtn(self, btn=0, sem=None):
 
     if (btn == 0):
-      self.startBtn.setText("START")
-      self.startBtn.setStatusTip("Start a new game")
       self.startBtn.setStyleSheet("QPushButton { font-size: 26pt; font-family: BatmanForeverAlternate; color: black;"
-                                              "border: 4px ridge black;"
-                                              "border-radius: 75px;"
-                                              "background: gray; }"
-                              "QPushButton:hover { color: white; border: 5px solid white; }" 
-                              "QPushButton:pressed { color: rgb(0,255,0); border: 5px solid rgb(0,255,0); }" )
+                                                "border: 5px solid black;"
+                                                "border-radius: 100px;"
+                                                "background: gray; }"
+                            "QPushButton:hover { color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #FF0000, stop: 0.3 #FFFF00, stop: 0.6 #00FF00, stop: 1.0 #0000FF);"
+                                                "border-bottom-color: rgb(0,255,0);"
+                                                "border-left-color: rgb(255,0,0);"
+                                                "border-top-color: rgb(0,0,255);"
+                                                "border-right-color: rgb(255,255,0); }" 
+                            "QPushButton:pressed { color: rgb(0,255,0); border: 5px solid rgb(0,255,0); }" )
 
     if (btn == 1):
       self.btn1.setStyleSheet("QPushButton{ background-color: rgb(175,255,175);"
-                                           "border: 5px ridge black;"                                            
+                                           "border: 5px solid black;"                                            
                                            "border-radius: 15px;"                                           
                                            "border-top-left-radius: 75px; }"
-                            "QPushButton:hover{ background-color: rgb(0,255,0); }"
-                            "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
+                            "QPushButton:hover{ border-color: rgb(0,255,0); }"
+                            "QPushButton:pressed{ border-width: 7px; border-color: rgb(0,100,0); background-color: rgb(0,255,0); }")
 
     elif (btn == 2):
       self.btn2.setStyleSheet("QPushButton{ background-color: rgb(255,175,175);"
-                                           "border: 5px ridge black;"         
-                                           "border-radius: 15px; "
+                                           "border: 5px solid black;"         
+                                           "border-radius: 15px;"
                                            "border-top-right-radius: 75px; }"
-                            "QPushButton:hover{ background-color: rgb(255,0,0); }"
-                            "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
+                            "QPushButton:hover{ border-color: rgb(255,0,0); }"
+                            "QPushButton:pressed{ border-width: 7px; border-color: rgb(100,0,0); background-color: rgb(255,0,0); }")
 
     elif (btn == 3):
       self.btn3.setStyleSheet("QPushButton{ background-color: rgb(255,255,175);"
-                                           "border: 5px ridge black;"         
+                                           "border: 5px solid black;"         
                                            "border-radius: 15px;"
                                            "border-bottom-left-radius: 75px; }"
-                            "QPushButton:hover{ background-color: rgb(255,255,0); }"
-                            "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
+                            "QPushButton:hover{ border-color: rgb(255,255,0); }"
+                            "QPushButton:pressed{ border-width: 7px; border-color: rgb(75,75,0); background-color: rgb(255,255,0); }")
         
     elif (btn == 4):
       self.btn4.setStyleSheet("QPushButton{ background-color: rgb(175,175,255);"
-                                           "border: 5px ridge black;"      
+                                           "border: 5px solid black;"      
                                            "border-radius: 15px;"
                                            "border-bottom-right-radius: 75px; }"
-                            "QPushButton:hover{ background-color: rgb(0,0,255); }"
-                            "QPushButton:pressed{ border: 5px ridge white; border-radius: 35px; }")
+                            "QPushButton:hover{ border-color: rgb(0,0,255); }"
+                            "QPushButton:pressed{ border-width: 7px; border-color: rgb(0,0,100); background-color: rgb(0,0,255); }")
 
     if (sem):
       sem.release()
+
+  # flash START button
+  def flashStart(self, btn):
+
+    if (btn == 1):
+      self.startBtn.setStyleSheet("QPushButton { font-size: 26pt; font-family: BatmanForeverAlternate; color: rgb(0,255,0);"
+                                              "border: 5px solid black;"                                              
+                                              "border-radius: 100px;"
+                                              "background: gray; }" )
+
+    elif (btn == 2):
+      self.startBtn.setStyleSheet("QPushButton { font-size: 26pt; font-family: BatmanForeverAlternate; color: rgb(255,0,0);"
+                                              "border: 5px solid black;"                                              
+                                              "border-radius: 100px;"
+                                              "background: gray; }" )
+
+    elif (btn == 3):
+      self.startBtn.setStyleSheet("QPushButton { font-size: 26pt; font-family: BatmanForeverAlternate; color: rgb(255,255,0);"
+                                              "border: 5px solid black;"                                              
+                                              "border-radius: 100px;"
+                                              "background: gray; }" )
+
+    elif (btn == 4):
+      self.startBtn.setStyleSheet("QPushButton { font-size: 26pt; font-family: BatmanForeverAlternate; color: rgb(0,0,255);"
+                                              "border: 5px solid black;"                                              
+                                              "border-radius: 100px;"
+                                              "background: gray; }" )
 
   # flash button
   def flashBtn(self, btn, ms, sem):
 
     if (btn == 1):
       self.sounds[1].play()
+      self.flashStart(1)
       self.btn1.setStyleSheet("QPushButton{ background-color: rgb(0,255,0);"
                                            "border: 5px ridge black;"                                            
                                            "border-radius: 15px;"                                           
@@ -301,6 +343,7 @@ class MainWindow(QMainWindow):
 
     elif (btn == 2):
       self.sounds[2].play()
+      self.flashStart(2)
       self.btn2.setStyleSheet("QPushButton{ background-color: rgb(255,0,0);"
                                            "border: 5px ridge black;"         
                                            "border-radius: 15px; "
@@ -308,6 +351,7 @@ class MainWindow(QMainWindow):
 
     elif (btn == 3):
       self.sounds[3].play()
+      self.flashStart(3)
       self.btn3.setStyleSheet("QPushButton{ background-color: rgb(255,255,0);"
                                            "border: 5px ridge black;"         
                                            "border-radius: 15px;"
@@ -315,6 +359,7 @@ class MainWindow(QMainWindow):
             
     elif (btn == 4):
       self.sounds[4].play()
+      self.flashStart(4)
       self.btn4.setStyleSheet("QPushButton{ background-color: rgb(0,0,255);"
                                            "border: 5px ridge black;"      
                                            "border-radius: 15px;"
@@ -345,6 +390,7 @@ class MainWindow(QMainWindow):
   def enableDifficultyButtons(self, en=True):
     self.easyBtn.setEnabled(en)
     self.hardBtn.setEnabled(en)
+    self.startBtn.setEnabled(en)
 
   # init synth sounds from sounds/*.wav files
   def initSounds(self):
