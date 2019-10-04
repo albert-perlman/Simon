@@ -21,7 +21,7 @@ class MainWindow(QMainWindow):
     super(MainWindow, self).__init__(*args, **kwargs)
 
     self.appctxt    = ApplicationContext()
-    self.sounds     = self.initSounds()
+    self.setSoundPack("synths")
     self.difficulty = "easy"
 
     # fonts #
@@ -46,7 +46,17 @@ class MainWindow(QMainWindow):
                                      "border-radius: 15px;"
                                      "background: transparent; }"
                        "QPushButton:hover { color: white; border: 5px solid white; }" 
-                       "QPushButton:pressed { color: rgb(150,255,150); border: 5px solid rgb(150,255,150); }" )
+                       "QPushButton:pressed { color: rgb(150,255,150); border: 5px solid rgb(150,255,150); }"
+                       "QComboBox{ background:rgb(40,40,40); padding-left:30px; border-top-right-radius:10px; border-bottom-right-radius:10px; }"
+                       "QComboBox QAbstractItemView{ font-size: 14pt; color: black; font-family: LLPIXEL;"
+                                                     "background: rgb(100,100,100);"
+                                                     "selection-color: white;"
+                                                     "selection-background-color: rgb(40,40,40);"
+                                                     "border: 1px solid black; }" 
+                       "QComboBox:hover { border-top: 2px solid rgb(150,150,150);"
+                                         "border-right: 2px solid rgb(150,150,150);"
+                                         "border-bottom: 2px solid rgb(150,150,150); }"
+                       "QComboBox:drop-down { border-width:0px ;}" )
 
     MainVBoxLayout = QVBoxLayout()
 
@@ -65,7 +75,7 @@ class MainWindow(QMainWindow):
     self.msgBar = QLineEdit("press START to begin new game")
     font = QFont("Serif", 9) 
     self.msgBar.setFont(font)
-    self.msgBar.setStyleSheet("font-size: 16pt;  font-family: Consolas;"
+    self.msgBar.setStyleSheet("font-size: 16pt;  font-family: LLPIXEL;"
                              "color:rgb(255,255,255);"
                              "border: 2px ridge #707070;"
                              "border-radius: 10px;"
@@ -80,16 +90,6 @@ class MainWindow(QMainWindow):
     policy = self.msgBar.sizePolicy()
     policy.setHorizontalPolicy(QSizePolicy.Expanding)
     self.msgBar.setSizePolicy(policy)
-
-    ################
-    # START button #
-    ################
-    self.startBtn = QPushButton("S T A R T")
-    self.startBtn.setMinimumHeight(startBtnHeight)
-    self.startBtn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
-    # MainVBoxLayout.addWidget(self.startBtn)
-
-
 
     ################
     # EASY  button #
@@ -220,6 +220,21 @@ class MainWindow(QMainWindow):
 
     # add MsgBar at bottom
     MainVBoxLayout.addWidget(self.msgBar)
+
+    #####################
+    #  Sound Selection  #
+    #####################
+    self.soundList = QComboBox(MainWidgetContainer)
+    self.soundListWidth = 45
+    self.soundListWidthExpanded = 150
+    self.soundListHeight = 55
+    self.soundList.resize(self.soundListWidth,self.soundListHeight)
+    pos = QPoint(0, 7)
+    self.soundList.move(pos)
+    self.soundList.addItem("synths")
+    self.soundList.addItem("drums")
+    self.soundList.highlighted.connect(self.SLOT_soundListHighlighted)
+    self.soundList.currentIndexChanged.connect(self.SLOT_soundListIndexChanged)
 
     self.updateTitle()
     self.show()
@@ -389,30 +404,35 @@ class MainWindow(QMainWindow):
     self.startBtn.setEnabled(en)
 
   # init synth sounds from sounds/*.wav files
-  def initSounds(self):
-    soundsPath = "../sounds/"
-    sounds = {
-      
-      # START-UP #
-      # 0: QSound(self.appctxt.get_resource('/home/mojo/devel/git/Simon/src/main/resources/base/sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - Loops/Cymatics - Mothership Drop Loop 1 - 150 BPM F.wav')),
-      0: QSound(self.appctxt.get_resource('/home/mojo/devel/git/Simon/src/main/resources/base/sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - Loops/Cymatics - Mothership Drop Loop 2 - 150 BPM F.wav')),
-      # 0: QSound(self.appctxt.get_resource('/home/mojo/devel/git/Simon/src/main/resources/base/sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - Loops/Cymatics - Mothership Drop Loop 3 - 150 BPM F.wav')),
-      # 0: QSound(self.appctxt.get_resource('/home/mojo/devel/git/Simon/src/main/resources/base/sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - Loops/Cymatics - Mothership Drop Loop 4 - 150 BPM F.wav'))
+  def setSoundPack(self, soundSel): 
 
-      # WUB-SYNTH #
-      1: QSound(self.appctxt.get_resource('sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - One Shots/Cymatics - Mothership Bass One Shot 10 - F.wav')),
-      2: QSound(self.appctxt.get_resource('sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - One Shots/Cymatics - Mothership Bass One Shot 9 - F.wav')), # w/ snare
-      3: QSound(self.appctxt.get_resource('sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - One Shots/Cymatics - Mothership Bass One Shot 1 - E.wav')),
-      4: QSound(self.appctxt.get_resource('sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - One Shots/Cymatics - Mothership Bass One Shot 3 - E.wav'))
+    if( soundSel == "synths" ):
+      soundPack = {
+        
+        # START-UP #
+        0: QSound(self.appctxt.get_resource('sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - Loops/Cymatics - Mothership Drop Loop 2 - 150 BPM F.wav')),
 
-      # # SNARE #
-      # 1: QSound(self.appctxt.get_resource('sounds/Drums - One Shots/Snares/Cymatics - Terror Heavy Snare 014.wav')),
-      # 2: QSound(self.appctxt.get_resource('sounds/Drums - One Shots/Snares/Cymatics - Terror Heavy Snare 038.wav')),
-      # 3: QSound(self.appctxt.get_resource('sounds/Drums - One Shots/Snares/Cymatics - Ultimate Snare 20 - D#.wav')),
-      # 4: QSound(self.appctxt.get_resource('sounds/Drums - One Shots/Snares/Cymatics - Ultimate Snare 36 - G#.wav'))
-    }
+        # WUB-SYNTH #
+        1: QSound(self.appctxt.get_resource('sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - One Shots/Cymatics - Mothership Bass One Shot 10 - F.wav')),
+        2: QSound(self.appctxt.get_resource('sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - One Shots/Cymatics - Mothership Bass One Shot 9 - F.wav')), # w/ snare
+        3: QSound(self.appctxt.get_resource('sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - One Shots/Cymatics - Mothership Bass One Shot 1 - E.wav')),
+        4: QSound(self.appctxt.get_resource('sounds/Cymatics - Mothership Dubstep Sample Pack/Synths - One Shots/Cymatics - Mothership Bass One Shot 3 - E.wav'))
+      }
 
-    return sounds
+    elif( soundSel == "drums" ):
+      soundPack = {
+
+        # START-UP #
+        0: QSound(self.appctxt.get_resource('sounds/Cymatics - Mothership Dubstep Sample Pack/Drums - Loops/Full Drum Loops/Cymatics - Mothership Rasta Full Drum Loop - 140 BPM.wav')),
+
+        # SNARE #
+        1: QSound(self.appctxt.get_resource('sounds/Drums - One Shots/Snares/Cymatics - Terror Heavy Snare 014.wav')),
+        2: QSound(self.appctxt.get_resource('sounds/Drums - One Shots/Snares/Cymatics - Terror Heavy Snare 038.wav')),
+        3: QSound(self.appctxt.get_resource('sounds/Drums - One Shots/Snares/Cymatics - Ultimate Snare 20 - D#.wav')),
+        4: QSound(self.appctxt.get_resource('sounds/Drums - One Shots/Snares/Cymatics - Ultimate Snare 36 - G#.wav'))
+      }
+
+    self.sounds = soundPack
 
   # play sound effect
   def playSound(self, i):
@@ -429,6 +449,15 @@ class MainWindow(QMainWindow):
     self.difficulty = "hard"
     self.hardBtn.setChecked(True)
     self.easyBtn.setChecked(False)
+
+  # sound selection opened
+  def SLOT_soundListHighlighted(self):
+    # self.soundList.resize(self.soundListWidthExpanded, self.soundListHeight)
+    print("TODO: resize sounds list")
+
+  # sound selection changed
+  def SLOT_soundListIndexChanged(self):
+    self.setSoundPack(self.sender().currentText())
 
   # critical dialog pop-up
   def SLOT_dialogCritical(self, s):
